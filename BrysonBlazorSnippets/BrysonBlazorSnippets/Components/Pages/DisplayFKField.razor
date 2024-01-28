@@ -1,0 +1,68 @@
+﻿@page "/DisplayItemFK/{TestObjectId}"
+
+@using BrysonBlazorSnippets.Interfaces
+@using BrysonBlazorSnippets.Models
+
+@inject ITestObjectService testObjectService
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>TestObject details</title>
+    </head>
+    <body>
+        <section>            
+            <div class="card-header">
+                <h3 align="center"></h3>
+            </div>           
+                <div class="form-row" align="left">
+                    <img class="card-img-top" src="@AllForeignKeyObjects.FirstOrDefault(x=> x.Id == TestObject.ImageId)?.Image" alt="A text description of the image" />
+                </div>
+                <article class="form-row-desc" align="center">
+                    <header>
+                        <h6>Pokedex Number:</h6>
+                    </header>
+                    <div>
+                        <h4 class="poke-num-show">@TestObject.Id</h4>
+                    </div>                     
+                </article>
+                <div class="form-row-region" align="right">
+                    <header>
+                        <h6>Pokedex Number:</h6>
+                    </header>
+                    <div>
+                        <h4 class="poke-num-show">@TestObject.Id</h4>
+                    </div>
+                </div>  
+        </section>
+    </body>
+</html>
+
+
+
+@code {
+    [Parameter]
+    public string TestObjectId { get; set; }
+
+    private TestObject TestObject { get; set; }
+    private IEnumerable<TestObject> AllTestObjects { get; set; }
+    private IEnumerable<SomeForeignKeyObject> AllForeignKeyObjects { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        AllTestObjects = await testObjectService.GetAllTestObjects();
+        var testObjectId = int.Parse(TestObjectId);
+        TestObject = await GetTestObjectById(testObjectId);
+        AllForeignKeyObjects = await testObjectService.GetAllForeignKeyObjects();
+    }
+
+    private async Task<TestObject> GetTestObjectById(int id)
+    {
+        var targetItem = AllTestObjects.FirstOrDefault(x => x.Id == id);
+        return await Task.FromResult(targetItem);
+    }
+
+    
+
+}

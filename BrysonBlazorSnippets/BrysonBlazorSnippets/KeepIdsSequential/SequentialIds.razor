@@ -1,0 +1,32 @@
+﻿@using BrysonBlazorSnippets.Models;
+
+<h3>SequentialIds</h3>
+
+@code {
+
+
+    private IEnumerable<TestObject> allTestObjectsList;
+
+
+
+
+    //In Service layer use in method to keep id number sequential
+    // Using here for easy locating
+
+    public void InsertItem(TestObject item)
+    {
+        if (!allTestObjectsList.Any())
+        {
+            item.Id = 1;
+        }
+        else
+        {
+            item.Id = allTestObjectsList.Max(o => o.Id) + 1;
+        }
+
+    }
+
+
+    
+
+}

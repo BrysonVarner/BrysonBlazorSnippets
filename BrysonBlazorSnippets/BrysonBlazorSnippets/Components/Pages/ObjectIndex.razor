@@ -1,0 +1,72 @@
+﻿@page "/objectindex"
+
+
+@using BrysonBlazorSnippets.Interfaces
+@using BrysonBlazorSnippets.Models
+
+@inject ITestObjectService testObjectService
+@inject NavigationManager nm
+
+<h3>ObjectIndex</h3>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>TestObject details</title>
+</head>
+<body>
+    <section>
+        
+        @foreach (var item in AllTestObjects)
+        {
+            
+            <button class="item-row-btn" onclick="@HandleOnButtonClick"  >
+                <div class="card-header">
+                    <h3 align="center">@item.Name</h3>
+                </div>
+                <div class="form-row" align="left">
+                    <img class="card-img-top" src="@AllForeignKeyObjects.FirstOrDefault(x=> x.Id == item.ImageId)?.Image" alt="A text description of the image" />
+                </div>
+                <article class="form-row-desc" align="center">
+                    <header>
+                        <h6>Pokedex Number:</h6>
+                    </header>
+                    <div>
+                        <h4 class="poke-num-show">@item.Id</h4>
+                    </div>
+                </article>
+                <div class="form-row-region" align="right">
+                    <header>
+                        <h6>Pokedex Region:</h6>
+                    </header>
+                    <div>
+                        <h4 class="poke-num-show">@item.Region</h4>
+                    </div>
+                </div>
+            </button>
+        }
+
+    </section>
+</body>
+</html>
+
+@code {
+    private TestObject TestObject {get; set;} 
+    private List<TestObject> AllTestObjects { get; set; }
+    private List<SomeForeignKeyObject> AllForeignKeyObjects { get; set; }
+    private delegate void showItemPage();
+
+    protected override async Task OnInitializedAsync()
+    {
+        AllTestObjects = await testObjectService.GetAllTestObjects();
+        AllForeignKeyObjects = await testObjectService.GetAllForeignKeyObjects();
+    }
+
+    private void HandleOnButtonClick(EventArgs e)
+    {
+        Console.WriteLine("EH running");
+        TestObject selectedItem = e.Values.ToString();
+        Task.Run(() => nm.NavigateTo($"/DisplayObjectFK/{selectedItem.Id}"));
+    }
+}
